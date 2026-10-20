@@ -1,0 +1,1524 @@
+index.htm
+l<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metáforo! 3000 - O Quiz Futurista de Metáforas (6º Ano)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        cyber: {
+                            dark: '#070A13',
+                            card: '#0F172A',
+                            border: '#1E293B',
+                            cyan: '#06B6D4',
+                            magenta: '#EC4899',
+                            purple: '#A855F7',
+                            emerald: '#10B981',
+                            amber: '#F59E0B',
+                            rose: '#F43F5E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #070a13;
+            background-image: 
+                radial-gradient(at 20% 20%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f3f4f6;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .correct-option-glow {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0.2)) !important;
+            border: 3px solid #10B981 !important;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8), inset 0 0 15px rgba(16, 185, 129, 0.4) !important;
+            animation: pulseGlow 1.4s infinite ease-in-out !important;
+            transform: scale(1.02);
+            z-index: 20;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1.02);
+                box-shadow: 0 0 25px rgba(16, 185, 129, 0.7), inset 0 0 10px rgba(16, 185, 129, 0.3);
+            }
+            50% {
+                transform: scale(1.04);
+                box-shadow: 0 0 45px rgba(52, 211, 153, 1), inset 0 0 20px rgba(52, 211, 153, 0.6);
+            }
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- TOP HEADER / NAV BAR -->
+    <header class="no-print w-full glass-panel border-b border-slate-800 px-4 py-3 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goToHome()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-purple-600 to-pink-500 p-0.5 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-brain text-cyan-400 text-xl animate-pulse"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-black text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400">
+                        METÁFORO! <span class="text-xs font-bold text-cyan-400 border border-cyan-500/50 px-1.5 py-0.5 rounded ml-1">3000</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 font-rajdhani font-semibold tracking-wide hidden sm:block">Quiz Futurista de Metáforas • 6º Ano</p>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <div id="headerPinBadge" class="hidden flex items-center space-x-2 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-xl">
+                    <span class="text-xs text-slate-400 uppercase font-bold">SALA:</span>
+                    <span id="displayRoomPin" class="font-orbitron font-black text-cyan-400 tracking-wider">------</span>
+                </div>
+                <button onclick="launchSandboxMode()" title="Abrir Modo Sandbox (Tela Dupla Aluno/Professor)" class="hidden sm:flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-purple-300 px-3 py-1.5 rounded-xl text-xs font-semibold transition hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                    <i class="fa-solid fa-clone text-purple-400"></i>
+                    <span>Modo Sandbox</span>
+                </button>
+                <button id="btnToggleAudio" onclick="toggleAudio()" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-cyan-400 transition hover:border-cyan-500/50">
+                    <i class="fa-solid fa-volume-high text-lg" id="audioIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-3 sm:p-6 max-w-7xl w-full mx-auto">
+
+        <!-- VIEW 1: ROLE SELECTION -->
+        <div id="viewRoleSelect" class="w-full max-w-2xl glass-panel rounded-3xl p-6 md:p-10 text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute -left-10 -top-10 w-40 h-40 bg-cyan-600/20 rounded-full blur-3xl"></div>
+
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-widest uppercase mb-4">
+                <i class="fa-solid fa-rocket"></i>
+                <span>Módulo de Língua Portuguesa</span>
+            </div>
+
+            <h2 class="font-orbitron font-black text-3xl md:text-5xl text-white mb-3 tracking-wide">
+                BEM-VINDO AO <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500">METÁFORO!</span>
+            </h2>
+            <p class="text-slate-300 font-medium mb-8 max-w-lg mx-auto text-sm md:text-base">
+                Domine o poder das figuras de linguagem em uma arena cibernética interativa em tempo real.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                <!-- Sou Professor Button -->
+                <button onclick="openTeacherLoginModal()" class="group relative bg-gradient-to-b from-slate-800 to-slate-900 border border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(6,182,212,0.3)] flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-400 mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-chalkboard-user text-2xl"></i>
+                        </div>
+                        <h3 class="font-orbitron font-bold text-xl text-white mb-1">SOU PROFESSOR</h3>
+                        <p class="text-xs text-slate-400">Criar sala Host, controlar perguntas, visualizar relatórios e pódio.</p>
+                    </div>
+                    <div class="mt-6 flex items-center font-bold text-xs text-cyan-400 group-hover:translate-x-1 transition-transform">
+                        <span>Acessar Painel Host</span>
+                        <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </button>
+
+                <!-- Sou Aluno Button -->
+                <button onclick="showStudentJoinScreen()" class="group relative bg-gradient-to-b from-slate-800 to-slate-900 border border-pink-500/40 hover:border-pink-400 rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(236,72,153,0.3)] flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-400/30 flex items-center justify-center text-pink-400 mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-gamepad text-2xl"></i>
+                        </div>
+                        <h3 class="font-orbitron font-bold text-xl text-white mb-1">SOU ALUNO</h3>
+                        <p class="text-xs text-slate-400">Entrar com código PIN, escolher seu Avatar Neon e responder o quiz.</p>
+                    </div>
+                    <div class="mt-6 flex items-center font-bold text-xs text-pink-400 group-hover:translate-x-1 transition-transform">
+                        <span>Entrar na Arena</span>
+                        <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 2: TEACHER LOGIN MODAL -->
+        <div id="viewTeacherLogin" class="hidden w-full max-w-md glass-panel rounded-3xl p-8 shadow-2xl relative">
+            <button onclick="goToHome()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-cyan-500/20 border border-cyan-400/40 rounded-2xl mx-auto flex items-center justify-center text-cyan-400 mb-3">
+                    <i class="fa-solid fa-key text-2xl"></i>
+                </div>
+                <h3 class="font-orbitron font-bold text-2xl text-white">Acesso do Professor</h3>
+                <p class="text-xs text-slate-400 mt-1">Digite a chave de acesso para iniciar a sala host.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Chave do Professor</label>
+                    <input type="password" id="inputTeacherPassword" placeholder="Sua Senha de Acesso" class="w-full bg-slate-900/90 border border-slate-700 focus:border-cyan-400 text-white rounded-xl px-4 py-3 font-mono text-center tracking-widest text-lg outline-none transition">
+                </div>
+
+                <div id="loginErrorMsg" class="hidden bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs p-3 rounded-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>Chave incorreta! Tente novamente.</span>
+                </div>
+
+                <button onclick="verifyTeacherPassword()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3.5 rounded-xl font-orbitron tracking-wider transition shadow-lg shadow-cyan-500/30">
+                    ACESSAR COMO HOST
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 3: HOST LOBBY -->
+        <div id="viewHostLobby" class="hidden w-full max-w-4xl glass-panel rounded-3xl p-6 md:p-8 shadow-2xl">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-800">
+                <div>
+                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-widest">PAINEL DO PROFESSOR (HOST)</span>
+                    <h2 class="font-orbitron font-black text-2xl md:text-3xl text-white">SALA DE ESPAÇO CYBER</h2>
+                    <p class="text-xs text-slate-400">Peça para os alunos acessarem com o Código PIN abaixo.</p>
+                </div>
+
+                <div class="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-2 border-cyan-400/60 rounded-2xl px-6 py-3 text-center shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                    <span class="text-xs font-bold text-slate-300 tracking-wider block">CÓDIGO PIN DA SALA</span>
+                    <span id="hostRoomPin" class="font-orbitron font-black text-3xl md:text-4xl text-cyan-400 tracking-widest">------</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-4 my-6">
+                <div class="flex items-center space-x-3">
+                    <span class="text-slate-300 font-bold text-sm">JOGADORES CONECTADOS:</span>
+                    <span id="hostPlayerCount" class="bg-cyan-500 text-slate-950 font-black px-3 py-0.5 rounded-full text-sm font-orbitron">0</span>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button onclick="addSimulatedBots(30)" class="bg-slate-800 hover:bg-slate-700 border border-purple-500/50 text-purple-300 hover:text-purple-200 text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center space-x-2">
+                        <i class="fa-solid fa-robot text-purple-400"></i>
+                        <span>+30 BOTS SIMULADOS</span>
+                    </button>
+                    <button id="btnStartGame" onclick="startQuizFromHost()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black px-6 py-2.5 rounded-xl font-orbitron tracking-wider transition shadow-lg shadow-emerald-500/30 flex items-center space-x-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>INICIAR JOGO</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="hostPlayersGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-72 overflow-y-auto custom-scrollbar p-2 bg-slate-950/50 rounded-2xl border border-slate-800/80 min-h-[160px]">
+                <div class="col-span-full flex flex-col items-center justify-center text-slate-500 py-8">
+                    <i class="fa-solid fa-spinner animate-spin text-2xl mb-2 text-cyan-400"></i>
+                    <p class="text-xs">Aguardando entrada de alunos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 4: HOST QUESTION ACTIVE SCREEN -->
+        <div id="viewHostQuestion" class="hidden w-full max-w-5xl glass-panel rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col justify-between min-h-[580px]">
+            <div>
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <span id="hostQCategory" class="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-bold tracking-wider">PERGUNTA 1 DE 15</span>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-slate-800 border border-slate-700 px-3 py-1 rounded-xl text-xs font-bold text-slate-300">
+                            RESPOSTAS: <span id="hostAnswersCounter" class="text-cyan-400 font-orbitron text-sm">0 / 0</span>
+                        </div>
+                        <div id="hostTimerBadge" class="font-orbitron font-black text-2xl text-amber-400 bg-amber-500/10 border border-amber-500/30 px-4 py-1 rounded-xl">
+                            45s
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full bg-slate-900 rounded-full h-3 mb-6 overflow-hidden p-0.5 border border-slate-800">
+                    <div id="hostTimerBar" class="bg-gradient-to-r from-cyan-400 via-amber-400 to-rose-500 h-full rounded-full transition-all duration-1000 ease-linear w-full"></div>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 mb-6 text-center shadow-inner">
+                    <h3 id="hostQuestionText" class="font-orbitron font-bold text-xl md:text-2xl text-white leading-relaxed">
+                        Carregando pergunta...
+                    </h3>
+                </div>
+
+                <div id="hostOptionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic Options Populated via JS -->
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="forceHostReveal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white px-5 py-2.5 rounded-xl font-bold text-xs transition flex items-center space-x-2">
+                    <i class="fa-solid fa-forward"></i>
+                    <span>REVELAR RESPOSTA AGORA</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 5: HOST ANSWER REVEAL & STATS -->
+        <div id="viewHostReveal" class="hidden w-full max-w-5xl glass-panel rounded-3xl p-6 md:p-8 shadow-2xl">
+            <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+                <div>
+                    <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">RESULTADO DA RODADA</span>
+                    <h3 class="font-orbitron font-bold text-xl text-white">REVELAÇÃO DA RESPOSTA</h3>
+                </div>
+                <button onclick="hostNextQuestion()" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black px-6 py-2.5 rounded-xl font-orbitron tracking-wider transition shadow-lg shadow-cyan-500/30 flex items-center space-x-2">
+                    <span>PRÓXIMA PERGUNTA</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div id="hostRevealOptionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <!-- Correct option will have .correct-option-glow -->
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5">
+                    <h4 class="font-orbitron font-bold text-sm text-slate-300 mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-simple text-cyan-400 mr-2"></i>
+                        DISTRIBUIÇÃO DE RESPOSTAS DA TURMA
+                    </h4>
+                    <div id="hostDistributionBars" class="space-y-3">
+                        <!-- Bars generated dynamically -->
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5">
+                    <h4 class="font-orbitron font-bold text-sm text-slate-300 mb-4 flex items-center">
+                        <i class="fa-solid fa-trophy text-amber-400 mr-2"></i>
+                        LÍDERES DA RODADA (TOP 5)
+                    </h4>
+                    <div id="hostTopLeaderboard" class="space-y-2">
+                        <!-- Top players generated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 6: HOST FINAL PODIUM -->
+        <div id="viewHostPodium" class="hidden w-full max-w-4xl glass-panel rounded-3xl p-6 md:p-10 text-center shadow-2xl">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-bold tracking-widest uppercase mb-4">
+                <i class="fa-solid fa-crown"></i>
+                <span>PARTIDA CONCLUÍDA</span>
+            </div>
+
+            <h2 class="font-orbitron font-black text-3xl md:text-5xl text-white mb-2">PÓDIO METÁFORO 3000</h2>
+            <p class="text-slate-400 text-sm mb-8">Parabéns aos campeões da jornada literária futurista!</p>
+
+            <div id="podiumContainer" class="flex justify-center items-end gap-3 md:gap-6 mb-10 h-64 pt-6">
+                <!-- 2nd Place -->
+                <div id="podium2" class="w-1/3 max-w-[150px] bg-gradient-to-t from-slate-900 to-slate-800 border-t-4 border-slate-300 rounded-t-2xl p-3 flex flex-col justify-between items-center shadow-lg transition-all duration-500 h-[70%]">
+                    <div class="text-center">
+                        <div id="avatarPodium2" class="mb-1"></div>
+                        <div id="namePodium2" class="font-bold text-xs text-white truncate w-24">---</div>
+                        <div id="scorePodium2" class="text-xs font-orbitron font-black text-slate-300">0 pts</div>
+                    </div>
+                    <div class="font-orbitron font-black text-2xl text-slate-400">2º</div>
+                </div>
+
+                <!-- 1st Place -->
+                <div id="podium1" class="w-1/3 max-w-[170px] bg-gradient-to-t from-slate-900 via-amber-950/40 to-slate-800 border-t-4 border-amber-400 rounded-t-2xl p-3 flex flex-col justify-between items-center shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-500 h-[100%]">
+                    <div class="text-center">
+                        <i class="fa-solid fa-crown text-amber-400 text-xl mb-1 animate-bounce"></i>
+                        <div id="avatarPodium1" class="mb-1"></div>
+                        <div id="namePodium1" class="font-bold text-sm text-white truncate w-28">---</div>
+                        <div id="scorePodium1" class="text-xs font-orbitron font-black text-amber-400">0 pts</div>
+                    </div>
+                    <div class="font-orbitron font-black text-3xl text-amber-400">1º</div>
+                </div>
+
+                <!-- 3rd Place -->
+                <div id="podium3" class="w-1/3 max-w-[150px] bg-gradient-to-t from-slate-900 to-slate-800 border-t-4 border-amber-700 rounded-t-2xl p-3 flex flex-col justify-between items-center shadow-lg transition-all duration-500 h-[55%]">
+                    <div class="text-center">
+                        <div id="avatarPodium3" class="mb-1"></div>
+                        <div id="namePodium3" class="font-bold text-xs text-white truncate w-24">---</div>
+                        <div id="scorePodium3" class="text-xs font-orbitron font-black text-amber-600">0 pts</div>
+                    </div>
+                    <div class="font-orbitron font-black text-2xl text-amber-700">3º</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <button onclick="generateClassReportModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold px-6 py-3 rounded-xl font-orbitron text-xs tracking-wider transition flex items-center space-x-2">
+                    <i class="fa-solid fa-file-invoice text-cyan-400"></i>
+                    <span>RELATÓRIO IMPRESSO DA TURMA</span>
+                </button>
+
+                <button onclick="startQuizFromHost()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-slate-950 font-black px-8 py-3 rounded-xl font-orbitron text-xs tracking-wider transition shadow-lg shadow-emerald-500/30 flex items-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>NOVA PARTIDA</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 6.5: STUDENT GOOGLE AUTH -->
+        <div id="viewStudentGoogleAuth" class="hidden w-full max-w-md glass-panel rounded-3xl p-8 text-center shadow-2xl relative">
+            <button onclick="goToHome()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="mb-6">
+                <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                    <svg width="30" height="30" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-orbitron font-bold text-2xl text-white">Autenticação Google</h3>
+                <p class="text-xs text-slate-400 mt-2">É obrigatório estar logado na sua conta de estudante para aceder ao quiz.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="text-left">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Conta do Google (@escola.com)</label>
+                    <input type="email" id="studentGoogleEmailInput" placeholder="seuemail@escola.com" class="w-full bg-slate-900 border border-slate-700 focus:border-blue-500 text-white rounded-xl px-4 py-3 outline-none transition text-center mb-1">
+                </div>
+
+                <div id="googleAuthError" class="hidden bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs p-3 rounded-xl flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>Email inválido. Precisa fazer login!</span>
+                </div>
+
+                <button onclick="processGoogleLogin()" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-black py-3.5 rounded-xl font-orbitron tracking-wider transition flex items-center justify-center space-x-3 shadow-lg">
+                    <span>CONTINUAR COM GOOGLE</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 7: STUDENT JOIN SCREEN (AVATAR CREATOR) -->
+        <div id="viewStudentJoin" class="hidden w-full max-w-lg glass-panel rounded-3xl p-6 md:p-8 shadow-2xl">
+            <button onclick="goToHome()" class="text-slate-400 hover:text-white transition mb-4 text-xs flex items-center">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Voltar
+            </button>
+
+            <div class="text-center mb-6">
+                <h3 class="font-orbitron font-black text-2xl text-white">CRIADOR DE AVATAR</h3>
+                <p class="text-xs text-slate-400 mt-1">Monte seu personagem e entre na arena.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Código da Sala</label>
+                        <input type="number" id="studentInputPin" placeholder="PIN" maxlength="6" class="w-full bg-slate-900 border border-slate-700 focus:border-pink-500 text-white rounded-xl px-3 py-2 font-orbitron text-center tracking-widest text-lg uppercase outline-none transition">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Apelido</label>
+                        <input type="text" id="studentInputName" placeholder="Nome" maxlength="15" class="w-full bg-slate-900 border border-slate-700 focus:border-pink-500 text-white rounded-xl px-3 py-2 text-center text-lg outline-none transition">
+                    </div>
+                </div>
+
+                <!-- CUSTOM AVATAR BUILDER UI -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Personalize seu visual</label>
+                    
+                    <div class="w-full bg-slate-950/60 border border-slate-800 rounded-t-xl p-4 flex justify-center border-b-0">
+                        <div class="relative w-20 h-24" id="builderPreviewBox">
+                            <!-- JS Will Render Here -->
+                        </div>
+                    </div>
+
+                    <div class="flex w-full border-x border-slate-800">
+                        <button onclick="switchAvatarTab('body')" id="tab_body" class="flex-1 bg-pink-500 text-white text-xs font-bold py-2 border-r border-slate-800 transition">Corpo</button>
+                        <button onclick="switchAvatarTab('hat')" id="tab_hat" class="flex-1 bg-slate-900 text-slate-400 text-xs font-bold py-2 border-r border-slate-800 hover:text-white transition">Chapéu</button>
+                        <button onclick="switchAvatarTab('acc')" id="tab_acc" class="flex-1 bg-slate-900 text-slate-400 text-xs font-bold py-2 hover:text-white transition">Acessório</button>
+                    </div>
+
+                    <div id="grid_body" class="grid grid-cols-5 gap-2 h-36 overflow-y-auto custom-scrollbar p-3 bg-slate-900 rounded-b-xl border border-slate-800"></div>
+                    <div id="grid_hat" class="hidden grid grid-cols-5 gap-2 h-36 overflow-y-auto custom-scrollbar p-3 bg-slate-900 rounded-b-xl border border-slate-800"></div>
+                    <div id="grid_acc" class="hidden grid grid-cols-5 gap-2 h-36 overflow-y-auto custom-scrollbar p-3 bg-slate-900 rounded-b-xl border border-slate-800"></div>
+                </div>
+
+                <button onclick="joinRoomAsStudent()" class="w-full mt-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-black py-3.5 rounded-xl font-orbitron tracking-wider transition shadow-lg shadow-pink-500/30">
+                    CONECTAR À SALA
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 8: STUDENT WAITING LOBBY -->
+        <div id="viewStudentWaiting" class="hidden w-full max-w-md glass-panel rounded-3xl p-8 text-center shadow-2xl">
+            <div class="w-24 h-28 mx-auto mb-4 border-2 border-pink-500/50 rounded-2xl bg-slate-900 shadow-[0_0_20px_rgba(236,72,153,0.3)] flex items-center justify-center p-2" id="studentAvatarPreview">
+                <!-- Rendered Avatar -->
+            </div>
+
+            <h3 id="studentDisplayName" class="font-orbitron font-bold text-2xl text-white mb-1">Jogador</h3>
+            <p class="text-xs text-pink-400 font-bold uppercase tracking-widest mb-6">CONECTADO COM SUCESSO</p>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 mb-6">
+                <i class="fa-solid fa-gamepad text-3xl text-cyan-400 animate-bounce mb-3"></i>
+                <p class="text-sm font-semibold text-slate-300">Tudo pronto! Aguardando o professor iniciar o jogo...</p>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 flex items-center justify-between">
+                <span class="text-xs text-slate-400 font-bold">SUA PONTUAÇÃO:</span>
+                <span id="studentWaitingScore" class="font-orbitron font-black text-amber-400 text-lg">0 pts</span>
+            </div>
+        </div>
+
+        <!-- VIEW 9: STUDENT QUESTION ACTIVE VIEW -->
+        <div id="viewStudentQuestion" class="hidden w-full max-w-2xl glass-panel rounded-3xl p-5 md:p-8 shadow-2xl flex flex-col justify-between min-h-[520px]">
+            <div>
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                    <div class="flex items-center space-x-2">
+                        <span id="studentQNum" class="text-xs font-bold px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">PERGUNTA 1</span>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 px-3 py-1 rounded-xl text-xs font-bold text-slate-300">
+                        TOTAL: <span id="studentLiveScore" class="text-amber-400 font-orbitron">0 pts</span>
+                    </div>
+                </div>
+
+                <div class="w-full bg-slate-900 rounded-full h-2.5 mb-6 overflow-hidden border border-slate-800">
+                    <div id="studentTimerBar" class="bg-cyan-400 h-full rounded-full transition-all duration-1000 ease-linear w-full"></div>
+                </div>
+
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 mb-6 text-center">
+                    <h3 id="studentQuestionText" class="font-orbitron font-bold text-lg md:text-xl text-white leading-relaxed">
+                        Aguardando pergunta...
+                    </h3>
+                </div>
+
+                <div id="studentOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dynamic Answer Buttons -->
+                </div>
+            </div>
+
+            <div id="studentAnswerSubmittedBox" class="hidden mt-4 bg-cyan-500/20 border border-cyan-500/50 p-4 rounded-xl text-center">
+                <i class="fa-solid fa-check-circle text-cyan-400 text-2xl mb-1"></i>
+                <p class="font-orbitron font-bold text-cyan-300 text-sm">RESPOSTA ENVIADA!</p>
+                <p class="text-xs text-slate-400">Aguardando encerramento da rodada...</p>
+            </div>
+        </div>
+
+        <!-- VIEW 10: STUDENT RESULT SCREEN -->
+        <div id="viewStudentResult" class="hidden w-full max-w-xl glass-panel rounded-3xl p-6 md:p-8 text-center shadow-2xl">
+            <div id="studentResultHeader" class="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 border-2">
+            </div>
+
+            <h3 id="studentResultTitle" class="font-orbitron font-black text-2xl md:text-3xl text-white mb-1">---</h3>
+            <p id="studentResultSubtitle" class="text-xs text-slate-400 mb-6">---</p>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 mb-6 space-y-3">
+                <div class="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2">
+                    <span>Pontos nesta Rodada:</span>
+                    <span id="studentRoundPoints" class="font-orbitron font-bold text-emerald-400 text-base">+0 pts</span>
+                </div>
+                
+                <div class="flex justify-between items-center text-sm font-bold text-slate-200">
+                    <span>Pontuação Total Acumulada:</span>
+                    <span id="studentTotalAccumulatedScore" class="font-orbitron font-black text-amber-400 text-xl">0 pts</span>
+                </div>
+            </div>
+
+            <div class="text-left mb-6">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">OPÇÃO CORRETA DESTACADA:</span>
+                <div id="studentCorrectOptionDisplay" class="p-4 rounded-2xl correct-option-glow flex items-center space-x-3 text-white font-bold text-sm">
+                </div>
+            </div>
+
+            <div class="text-xs text-slate-400 italic">
+                Aguardando a próxima pergunta do professor...
+            </div>
+        </div>
+
+        <!-- VIEW 11: STUDENT FINAL RESULT SCREEN -->
+        <div id="viewStudentFinal" class="hidden w-full max-w-md glass-panel rounded-3xl p-8 text-center shadow-2xl">
+            <div class="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 mx-auto flex items-center justify-center text-amber-400 text-4xl mb-4 shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <h3 class="font-orbitron font-black text-3xl text-white mb-2">FIM DE JOGO!</h3>
+            <p class="text-xs text-slate-400 mb-6">Você concluiu a jornada no Metáforo 3000!</p>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 space-y-4">
+                <div>
+                    <span class="text-xs text-slate-400 block mb-1">PONTUAÇÃO FINAL ACUMULADA</span>
+                    <span id="studentFinalScoreDisplay" class="font-orbitron font-black text-4xl text-amber-400">0 pts</span>
+                </div>
+
+                <div class="border-t border-slate-800 pt-3 flex justify-between items-center text-xs">
+                    <span class="text-slate-400">Posição no Rank:</span>
+                    <span id="studentFinalRankDisplay" class="font-orbitron font-bold text-cyan-400">--º Lugar</span>
+                </div>
+            </div>
+
+            <button onclick="goToHome()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl font-orbitron text-xs tracking-wider transition">
+                VOLTAR AO INÍCIO
+            </button>
+        </div>
+
+    </main>
+
+    <!-- PRINTABLE REPORT MODAL -->
+    <div id="modalPrintReport" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar p-6 md:p-8 shadow-2xl relative">
+            <button onclick="closeClassReportModal()" class="no-print absolute top-4 right-4 text-slate-400 hover:text-slate-800">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+
+            <!-- Print Header -->
+            <div class="flex items-center justify-between border-b pb-4 mb-6">
+                <div>
+                    <h2 class="font-black text-2xl text-slate-900 uppercase">METÁFORO! 3000 — RELATÓRIO DE DESEMPENHO</h2>
+                    <p class="text-xs text-slate-600">Língua Portuguesa • 6º Ano • Figuras de Linguagem (Metáfora)</p>
+                </div>
+                <div class="text-right text-xs text-slate-500">
+                    <div id="reportDate" class="font-bold">--/--/----</div>
+                    <div>Relatório da Turma</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-slate-100 p-3 rounded-xl text-center">
+                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Total Alunos</span>
+                    <span id="reportTotalStudents" class="font-black text-xl text-slate-800">0</span>
+                </div>
+                <div class="bg-slate-100 p-3 rounded-xl text-center">
+                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Média de Acertos</span>
+                    <span id="reportAverageAccuracy" class="font-black text-xl text-emerald-600">0%</span>
+                </div>
+                <div class="bg-slate-100 p-3 rounded-xl text-center">
+                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Maior Pontuação</span>
+                    <span id="reportHighScore" class="font-black text-xl text-amber-600">0 pts</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h4 class="font-bold text-sm text-slate-800 mb-2 uppercase">Classificação Geral dos Alunos</h4>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-200 text-slate-700 font-bold border-b border-slate-300">
+                            <th class="p-2">Pos</th>
+                            <th class="p-2 w-16 text-center">Avatar</th>
+                            <th class="p-2">Aluno</th>
+                            <th class="p-2 text-center">Acertos</th>
+                            <th class="p-2 text-right">Pontuação Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportLeaderboardBody" class="divide-y divide-slate-200">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="no-print flex justify-end space-x-3 pt-4 border-t">
+                <button onclick="closeClassReportModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs">
+                    Fechar
+                </button>
+                <button onclick="window.print()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Imprimir Relatório</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="no-print w-full py-3 text-center text-xs text-slate-500 border-t border-slate-900 glass-panel">
+        <p>Metáforo! 3000 • Plataforma Educacional de Gamificação em Língua Portuguesa</p>
+    </footer>
+
+    <!-- Firebase: preencha firebaseConfig no script principal -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <!-- SCRIPT ENGINE -->
+    <script>
+        const QUIZ_QUESTIONS = [
+            { id: 1, difficulty: "FÁCIL", category: "Significado da Metáfora", question: "Na frase 'Aquele menino é um raio correndo no campo', qual é o significado da metáfora 'é um raio'?", options: ["Ele está soltando faíscas elétricas pela pele.", "Ele caiu no chão de repente.", "Ele é extremamente rápido ao correr.", "Ele está assustado com uma forte tempestade."], correct: 2 },
+            { id: 2, difficulty: "FÁCIL", category: "Conceito Fundamental", question: "O que distingue uma METÁFORA de uma COMPARAÇÃO DIRETA?", options: ["A metáfora só pode ser usada em poemas de ficção científica.", "A metáfora é uma frase sem qualquer sentido figurado.", "A metáfora usa conectivos explícitos como 'como' ou 'parece'.", "A metáfora faz uma afirmação direta sem usar 'como' ou 'parece'."], correct: 3 },
+            { id: 3, difficulty: "FÁCIL", category: "Interpretação Poética", question: "Na frase 'Sua voz é música para os meus ouvidos', o que a metáfora expressa?", options: ["Que ouvir aquela voz produz uma sensação muito agradável.", "Que a pessoa está cantando uma ópera clássica.", "Que o som da voz está alto e ensurdecedor.", "Que a voz precisa de instrumentos musicais para existir."], correct: 0 },
+            { id: 4, difficulty: "MÉDIA", category: "Linguagem Figurada", question: "'Aquele professor é uma biblioteca viva.' O que essa metáfora quer dizer?", options: ["O professor mora dentro de uma biblioteca pública.", "O professor possui uma vasta quantidade de conhecimento.", "O professor fala muito baixo para não fazer barulho.", "O professor é feito de papel e encadernação de pano."], correct: 1 },
+            { id: 5, difficulty: "MÉDIA", category: "Identificação de Figuras", question: "Qual das frases a seguir traz uma COMPARAÇÃO e NÃO uma metáfora?", options: ["O coração dela é uma pedra fria.", "Meus pensamentos são passarinhos voando longe.", "Ele ficou valente COMO um leão diante do perigo.", "A vida é uma montanha-russa de emoções."], correct: 2 },
+            { id: 6, difficulty: "MÉDIA", category: "Análise Semântica", question: "Na frase 'Ela tem um coração de ouro', a palavra 'ouro' indica metáfora para:", options: ["Valiosidade econômica e riqueza material em moedas.", "Peso físico elevado e rigidez no peito.", "Uma doença cardíaca rara e brilhante.", "Bondade, generosidade e nobreza de caráter."], correct: 3 },
+            { id: 7, difficulty: "MÉDIA", category: "Expressão Popular", question: "O que significa a metáfora 'Ele engoliu em seco ao ouvir a notícia'?", options: ["Teve dificuldade de reação por nervosismo ou medo.", "Bebeu um copo de água sem mastigar.", "Alimentou-se de comida desidratada.", "Perdeu a capacidade de falar para sempre."], correct: 0 },
+            { id: 8, difficulty: "V ou F", category: "Regra Gramatical", question: "[V ou F] Toda figura que associa duas ideias por semelhança sem o elemento 'como' é uma metáfora.", options: ["Verdadeiro", "Falso", "Depende do tamanho da frase", "Apenas em frases maiúsculas"], correct: 0 },
+            { id: 9, difficulty: "DIFÍCIL", category: "Simbologia do Tempo", question: "'O tempo é um rio que flui sem parar.' Qual ideia a metáfora do 'rio' transmite sobre o tempo?", options: ["Que o tempo pode ser guardado dentro de um pote.", "Que o tempo é contínuo, irreversível e está sempre em movimento.", "Que o tempo causa inundações nas cidades grandes.", "Que o tempo é gelado e cheio de peixes."], correct: 1 },
+            { id: 10, difficulty: "DIFÍCIL", category: "Contexto Tecnológico", question: "Em 'A internet é uma teia gigante de informações', qual o sentido da metáfora 'teia'?", options: ["Que a internet foi criada por aranhas virtuais.", "Que navegar na rede é cair numa armadilha perigosa.", "Que a rede mundial é feita de fios invisíveis de algodão.", "Que a internet possui conexões interligadas e complexas."], correct: 3 },
+            { id: 11, difficulty: "MÉDIA", category: "Poesia Clássica", question: "Se alguém diz 'A lua é um disco de prata', qual é o sentido da metáfora?", options: ["A lua tem o formato de um CD de música.", "A lua é brilhante, redonda e preciosa no céu.", "A lua foi construída por mineradores espaciais.", "A lua caiu na Terra como um prato voador."], correct: 1 },
+            { id: 12, difficulty: "FÁCIL", category: "Uso Cotidiano", question: "'Neste calor, meu quarto é um forno!' O que essa metáfora indica?", options: ["Que o quarto possui fogões instalados.", "Que a iluminação do quarto é feita por fogo.", "Que o ambiente está extremamente quente e abafado.", "Que a pessoa assa bolos dentro do quarto."], correct: 2 },
+            { id: 13, difficulty: "DIFÍCIL", category: "Estrutura", question: "Qual a principal diferença entre 'Ela é uma flor' e 'Ela é como uma flor'?", options: ["A primeira é metáfora; a segunda é comparação direta.", "A primeira é comparação direta; a segunda é metáfora.", "As duas são metáforas completas sem diferenças.", "Nenhuma delas utiliza linguagem figurada."], correct: 0 },
+            { id: 14, difficulty: "MÉDIA", category: "Metáfora de Emoções", question: "Na frase 'As palavras do amigo foram um bálsamo', o que isso significa?", options: ["O amigo falou palavras rudes e ofensivas.", "O amigo usou pomadas no machucado dele.", "O amigo mentiu para tentar agradar.", "As palavras trouxeram grande alívio e conforto."], correct: 3 },
+            { id: 15, difficulty: "FÁCIL", category: "Natureza", question: "'O mar é um espelho gigante'. Qual característica a metáfora do 'espelho' descreve?", options: ["O mar é perigoso e corta como vidro.", "A água está tão calma e limpa que reflete o céu.", "O fundo do mar está cheio de móveis e decorações.", "A água quebrou em sete mil pedaços."], correct: 1 }
+        ];
+
+        // NOVAS OPÇÕES DE CUSTOMIZAÇÃO (20 cada)
+        const BODIES = ["👨‍🔧", "👾", "🍄", "🐢", "👻", "🌟", "🦖", "🦍", "👸", "👑", "🧱", "💣", "🪙", "🕹️", "🎮", "🚀", "🛸", "🤖", "🔥", "⛄"];
+        const HATS = ["🎩", "🎓", "👑", "⛑️", "🤠", "🪖", "🧢", "👒", "🎀", "🎧", "🥽", "🕶️", "👓", "🌸", "🍄", "🪶", "🦇", "🧊", "🛸", "🌟"];
+        const ACCESSORIES = ["🎒", "🗡️", "🛡️", "🪄", "📱", "⌚", "🧣", "🧤", "🌂", "💼", "🎸", "🛹", "🛼", "⚽", "🚀", "💡", "💎", "🍕", "🦜", "🐍"];
+
+        let state = {
+            role: null, 
+            roomPin: '',
+            isAudioMuted: false,
+            
+            currentQuestionIdx: 0,
+            questionState: 'LOBBY', 
+            questionTimer: 45,
+            timerInterval: null,
+            answersSubmittedThisRound: {},
+            players: {}, 
+
+            studentId: 'std_' + Math.random().toString(36).substr(2, 6),
+            studentName: '',
+            
+            // Dados do Avatar 3D (Composição)
+            studentBody: '🤖',
+            studentHat: '🎩',
+            studentAcc: '🎒',
+
+            studentTotalScore: 0, 
+            studentStreak: 0,
+            studentHasAnswered: false,
+            studentSelectedOption: null,
+            studentGoogleEmail: null 
+        };
+
+        // Cole aqui a configuração Web do SEU projeto Firebase.
+        const firebaseConfig = {
+            apiKey: "COLE_API_KEY",
+            authDomain: "COLE_AUTH_DOMAIN",
+            databaseURL: "COLE_DATABASE_URL",
+            projectId: "COLE_PROJECT_ID",
+            appId: "COLE_APP_ID"
+        };
+        let db = null;
+        let roomRef = null;
+        let activeListeners = [];
+        let currentStudentRef = null;
+        let firebaseReady = null;
+        function initOnline() {
+            if (firebaseReady) return firebaseReady;
+            firebaseReady = (async () => {
+                if (Object.values(firebaseConfig).some(v => !v || v.startsWith('COLE_'))) throw Error('Configure o Firebase no arquivo HTML antes de usar salas online.');
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+                await firebase.auth().signInAnonymously();
+                db = firebase.database();
+            })();
+            return firebaseReady.catch(e => { firebaseReady = null; throw e; });
+        }
+        function clearOnlineListeners() {
+            activeListeners.forEach(({ref, event, fn}) => ref.off(event, fn));
+            activeListeners = [];
+        }
+        function listen(ref, event, fn) {
+            ref.on(event, fn);
+            activeListeners.push({ref, event, fn});
+        }
+        let broadcastChannel = null;
+        let audioCtx = null;
+
+        // --- SISTEMA DE RENDERIZAÇÃO DO AVATAR ---
+        function getAvatarHtml(body, hat, acc, scale='normal') {
+            const sizes = scale === 'small' ? 'w-10 h-12 text-2xl' : (scale === 'large' ? 'w-24 h-28 text-6xl' : 'w-14 h-16 text-4xl');
+            const hatSize = scale === 'small' ? 'text-sm top-0' : (scale === 'large' ? 'text-4xl top-0' : 'text-xl top-0');
+            const bodySize = scale === 'small' ? 'text-3xl top-3' : (scale === 'large' ? 'text-7xl top-5' : 'text-4xl top-3');
+            const accSize = scale === 'small' ? 'text-xs bottom-0 -right-1' : (scale === 'large' ? 'text-3xl bottom-1 -right-2' : 'text-lg bottom-0 -right-1');
+
+            return `
+            <div class="relative ${sizes} inline-block mx-auto flex-shrink-0">
+                <div class="absolute ${hatSize} left-1/2 -translate-x-1/2 z-30 drop-shadow-md">${hat}</div>
+                <div class="absolute ${bodySize} left-1/2 -translate-x-1/2 z-10">${body}</div>
+                <div class="absolute ${accSize} z-20 drop-shadow-md">${acc}</div>
+            </div>`;
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function toggleAudio() {
+            state.isAudioMuted = !state.isAudioMuted;
+            const icon = document.getElementById('audioIcon');
+            if (state.isAudioMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-lg text-rose-400";
+            } else {
+                icon.className = "fa-solid fa-volume-high text-lg text-cyan-400";
+                playSfx('click');
+            }
+        }
+
+        function playSfx(type) {
+            if (state.isAudioMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+                gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.05);
+            } 
+            else if (type === 'correct') {
+                const freqs = [523.25, 659.25, 783.99, 1046.50];
+                freqs.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0, now + idx * 0.08); gain.gain.linearRampToValueAtTime(0.3, now + idx * 0.08 + 0.02); gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now + idx * 0.08); osc.stop(now + idx * 0.08 + 0.25);
+                });
+            }
+            else if (type === 'wrong') {
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(180, now); osc.frequency.exponentialRampToValueAtTime(70, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.3);
+            }
+            else if (type === 'fanfare') {
+                const freqs = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+                freqs.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                    osc.type = 'square'; osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+                    gain.gain.setValueAtTime(0.2, now + idx * 0.1); gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now + idx * 0.1); osc.stop(now + idx * 0.1 + 0.4);
+                });
+            }
+        }
+
+        function hideAllViews() {
+            const views = [
+                'viewRoleSelect', 'viewTeacherLogin', 'viewHostLobby', 
+                'viewHostQuestion', 'viewHostReveal', 'viewHostPodium',
+                'viewStudentGoogleAuth', 'viewStudentJoin', 'viewStudentWaiting', 
+                'viewStudentQuestion', 'viewStudentResult', 'viewStudentFinal'
+            ];
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
+
+        function showView(viewId) {
+            hideAllViews();
+            const el = document.getElementById(viewId);
+            if (el) el.classList.remove('hidden');
+        }
+
+        function goToHome() {
+            playSfx('click');
+            state.role = null;
+            document.getElementById('headerPinBadge').classList.add('hidden');
+            clearOnlineListeners();
+            if (broadcastChannel) { broadcastChannel.close(); broadcastChannel = null; }
+            showView('viewRoleSelect');
+        }
+
+        function openTeacherLoginModal() {
+            playSfx('click');
+            showView('viewTeacherLogin');
+            document.getElementById('loginErrorMsg').classList.add('hidden');
+            document.getElementById('inputTeacherPassword').value = '';
+        }
+
+        function verifyTeacherPassword() {
+            const pass = document.getElementById('inputTeacherPassword').value.trim().toLowerCase();
+            if (pass === 'sesi') {
+                playSfx('correct');
+                setupHostSession();
+            } else {
+                playSfx('wrong');
+                document.getElementById('loginErrorMsg').classList.remove('hidden');
+            }
+        }
+
+        async function setupHostSession() {
+            try {
+                await initOnline();
+                clearOnlineListeners();
+                state.role = 'HOST';
+                state.players = {};
+                // Evita sobrescrever uma sala existente ao gerar um novo PIN.
+                let pin, candidate, snap;
+                do {
+                    pin = Math.floor(100000 + Math.random() * 900000).toString();
+                    candidate = db.ref('rooms/' + pin);
+                    snap = await candidate.once('value');
+                } while (snap.exists());
+                state.roomPin = pin;
+                roomRef = candidate;
+                await roomRef.set({ status: 'LOBBY', createdAt: firebase.database.ServerValue.TIMESTAMP, players: {} });
+                document.getElementById('displayRoomPin').innerText = pin;
+                document.getElementById('hostRoomPin').innerText = pin;
+                document.getElementById('headerPinBadge').classList.remove('hidden');
+                renderHostPlayers();
+                showView('viewHostLobby');
+                listen(roomRef.child('players'), 'value', snapshot => {
+                    state.players = snapshot.val() || {};
+                    renderHostPlayers();
+                });
+                listen(roomRef.child('toHost'), 'child_added', snapshot => {
+                    const data = snapshot.val();
+                    if (data) handleHostIncomingMessage(data);
+                    snapshot.ref.remove();
+                });
+            } catch (e) { alert('Não foi possível abrir a sala: ' + e.message); }
+        }
+
+        function addSimulatedBots(count) {
+            playSfx('click');
+            const botNames = [
+                "CyberSaci", "TurboIara", "RoboCurupira", "ByteBoto", "PixelCuca",
+                "NeonZumbi", "TechTupã", "GigaCaipora", "VoltMapinguari", "MetaMula",
+                "AlphaAnhangá", "QuantumCobra", "AstroBoitatá", "GlitchNegrinho", "DataGuarani",
+                "MatrixIaiá", "LaserUirapuru", "HyperSamba", "SonicTropical", "Synthetica",
+                "CyberVitoria", "FuturoBossa", "NeonMacaco", "TupiByte", "CyberTamandua",
+                "CapivaraTech", "AraraPixel", "JacareVolt", "TucanoNeon", "OncaMatrix"
+            ];
+
+            for (let i = 0; i < count; i++) {
+                const botId = 'bot_' + Math.random().toString(36).substr(2, 6);
+                const name = botNames[i % botNames.length] + (i >= botNames.length ? `_${i}` : '');
+                
+                state.players[botId] = {
+                    id: botId,
+                    name: name,
+                    avatarData: {
+                        body: BODIES[Math.floor(Math.random() * BODIES.length)],
+                        hat: HATS[Math.floor(Math.random() * HATS.length)],
+                        acc: ACCESSORIES[Math.floor(Math.random() * ACCESSORIES.length)]
+                    },
+                    score: 0,
+                    streak: 0,
+                    correctCount: 0,
+                    isBot: true
+                };
+            }
+            renderHostPlayers();
+            if (roomRef && db) roomRef.child('players').set(state.players);
+        }
+
+        function renderHostPlayers() {
+            const grid = document.getElementById('hostPlayersGrid');
+            const pKeys = Object.keys(state.players);
+            document.getElementById('hostPlayerCount').innerText = pKeys.length;
+
+            if (pKeys.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center text-slate-500 py-8">
+                        <i class="fa-solid fa-spinner animate-spin text-2xl mb-2 text-cyan-400"></i>
+                        <p class="text-xs">Aguardando entrada de alunos...</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = pKeys.map(id => {
+                const p = state.players[id];
+                const avatarCode = getAvatarHtml(p.avatarData.body, p.avatarData.hat, p.avatarData.acc, 'small');
+                return `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex items-center space-x-2 truncate">
+                        ${avatarCode}
+                        <span class="text-xs font-bold text-slate-200 truncate ml-1">${p.name}</span>
+                    </div>`;
+            }).join('');
+        }
+
+        function startQuizFromHost() {
+            if(Object.keys(state.players).length === 0) {
+                alert("Aguarde a entrada dos alunos ou adicione bots!");
+                return;
+            }
+            playSfx('fanfare');
+            state.currentQuestionIdx = 0;
+            state.questionState = 'QUESTION';
+            if (roomRef) roomRef.child('status').set('PLAYING');
+
+            Object.keys(state.players).forEach(id => {
+                state.players[id].score = 0;
+                state.players[id].streak = 0;
+                state.players[id].correctCount = 0;
+            });
+
+            broadcastToStudents({ type: 'GAME_STARTED', questionIndex: 0 });
+            loadHostQuestion(0);
+        }
+
+        function loadHostQuestion(idx) {
+            state.currentQuestionIdx = idx;
+            state.questionState = 'QUESTION';
+            state.answersSubmittedThisRound = {};
+            state.questionTimer = 45;
+
+            const q = QUIZ_QUESTIONS[idx];
+
+            document.getElementById('hostQCategory').innerText = `PERGUNTA ${idx + 1} DE ${QUIZ_QUESTIONS.length}`;
+            document.getElementById('hostQuestionText').innerText = q.question;
+            document.getElementById('hostTimerBadge').innerText = '45s';
+            document.getElementById('hostTimerBar').style.width = '100%';
+            
+            updateHostAnswerCounter();
+
+            const letters = ['A', 'B', 'C', 'D'];
+            const container = document.getElementById('hostOptionsContainer');
+            container.innerHTML = q.options.map((opt, i) => `
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex items-center space-x-3 shadow-md">
+                    <span class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-orbitron font-black text-cyan-400 text-lg shadow-inner flex-shrink-0">
+                        ${letters[i]}
+                    </span>
+                    <span class="text-slate-200 font-semibold text-sm leading-snug">${opt}</span>
+                </div>
+            `).join('');
+
+            showView('viewHostQuestion');
+
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(() => {
+                state.questionTimer--;
+                document.getElementById('hostTimerBadge').innerText = state.questionTimer + 's';
+                document.getElementById('hostTimerBar').style.width = (state.questionTimer / 45 * 100) + '%';
+
+                if (state.questionTimer <= 10 && state.questionTimer > 0) playSfx('tick');
+                if (state.questionTimer <= 0) {
+                    clearInterval(state.timerInterval);
+                    revealHostAnswer();
+                }
+            }, 1000);
+
+            simulateBotAnswersThisRound();
+            broadcastToStudents({ type: 'QUESTION_START', questionIndex: idx, question: q });
+        }
+
+        function simulateBotAnswersThisRound() {
+            const q = QUIZ_QUESTIONS[state.currentQuestionIdx];
+            const botIds = Object.keys(state.players).filter(id => state.players[id].isBot);
+
+            botIds.forEach(botId => {
+                const delayMs = Math.floor(2000 + Math.random() * 38000);
+                setTimeout(() => {
+                    if (state.questionState !== 'QUESTION') return;
+                    const isCorrect = Math.random() < 0.75;
+                    let chosenOption = q.correct;
+                    if (!isCorrect) {
+                        const wrongOpts = [0, 1, 2, 3].filter(o => o !== q.correct);
+                        chosenOption = wrongOpts[Math.floor(Math.random() * wrongOpts.length)];
+                    }
+                    registerPlayerAnswer(botId, chosenOption);
+                }, delayMs);
+            });
+        }
+
+        function registerPlayerAnswer(playerId, optionIndex) {
+            if (state.questionState !== 'QUESTION') return;
+            if (state.answersSubmittedThisRound[playerId] !== undefined) return; 
+
+            state.answersSubmittedThisRound[playerId] = optionIndex;
+            updateHostAnswerCounter();
+
+            const totalPlayers = Object.keys(state.players).length;
+            const answersCount = Object.keys(state.answersSubmittedThisRound).length;
+
+            if (totalPlayers > 0 && answersCount >= totalPlayers) {
+                if (state.timerInterval) clearInterval(state.timerInterval);
+                setTimeout(() => {
+                    if (state.questionState === 'QUESTION') revealHostAnswer();
+                }, 400);
+            }
+        }
+
+        function updateHostAnswerCounter() {
+            const total = Object.keys(state.players).length;
+            const submitted = Object.keys(state.answersSubmittedThisRound).length;
+            document.getElementById('hostAnswersCounter').innerText = `${submitted} / ${total}`;
+        }
+
+        function forceHostReveal() {
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            revealHostAnswer();
+        }
+
+        function revealHostAnswer() {
+            state.questionState = 'REVEAL';
+            playSfx('fanfare');
+
+            const q = QUIZ_QUESTIONS[state.currentQuestionIdx];
+            const letters = ['A', 'B', 'C', 'D'];
+
+            Object.keys(state.players).forEach(id => {
+                const ans = state.answersSubmittedThisRound[id];
+                if (ans !== undefined && ans === q.correct) {
+                    state.players[id].correctCount++;
+                    state.players[id].streak++;
+                    const timeBonus = Math.floor((state.questionTimer / 45) * 500);
+                    const roundPoints = 1000 + timeBonus + (state.players[id].streak * 100);
+                    state.players[id].score += roundPoints;
+                } else {
+                    state.players[id].streak = 0;
+                }
+            });
+
+            const revealContainer = document.getElementById('hostRevealOptionsContainer');
+            revealContainer.innerHTML = q.options.map((opt, i) => {
+                const isCorrect = (i === q.correct);
+                const glowClass = isCorrect ? 'correct-option-glow' : 'bg-slate-900/70 border-slate-800 opacity-60';
+                
+                return `
+                    <div class="p-4 rounded-2xl border flex items-center justify-between transition-all duration-300 ${glowClass}">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-orbitron font-black ${isCorrect ? 'text-emerald-400' : 'text-slate-400'} text-lg">
+                                ${letters[i]}
+                            </span>
+                            <span class="text-white font-bold text-sm">${opt}</span>
+                        </div>
+                        ${isCorrect ? '<span class="text-xs font-black bg-emerald-500 text-slate-950 px-3 py-1 rounded-full uppercase tracking-wider font-orbitron">✓ CORRETA</span>' : ''}
+                    </div>`;
+            }).join('');
+
+            if (roomRef && db) roomRef.child('players').update(state.players);
+            renderDistributionChart(q.correct);
+            renderTopLeaderboard();
+            showView('viewHostReveal');
+
+            broadcastToStudents({
+                type: 'ROUND_REVEAL',
+                correctOption: q.correct,
+                correctText: q.options[q.correct],
+                playersMap: state.players
+            });
+        }
+
+        function renderDistributionChart(correctIdx) {
+            const counts = [0, 0, 0, 0];
+            Object.values(state.answersSubmittedThisRound).forEach(ans => {
+                if (ans >= 0 && ans < 4) counts[ans]++;
+            });
+
+            const totalAns = Object.keys(state.answersSubmittedThisRound).length || 1;
+            const letters = ['A', 'B', 'C', 'D'];
+
+            document.getElementById('hostDistributionBars').innerHTML = counts.map((cnt, i) => {
+                const pct = Math.round((cnt / totalAns) * 100);
+                const isCorrect = (i === correctIdx);
+                const barColor = isCorrect ? 'bg-emerald-500' : 'bg-cyan-500/60';
+
+                return `
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <span class="${isCorrect ? 'text-emerald-400 font-bold' : 'text-slate-300'}">Opção ${letters[i]}</span>
+                            <span class="text-slate-400">${cnt} respostas (${pct}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
+                            <div class="${barColor} h-full rounded-full transition-all duration-700" style="width: ${pct}%"></div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function renderTopLeaderboard() {
+            const sorted = Object.values(state.players).sort((a, b) => b.score - a.score).slice(0, 5);
+
+            document.getElementById('hostTopLeaderboard').innerHTML = sorted.map((p, idx) => `
+                <div class="flex items-center justify-between bg-slate-950/70 border border-slate-800/80 p-2.5 rounded-xl">
+                    <div class="flex items-center space-x-3">
+                        <span class="font-orbitron font-black text-sm w-6 text-center ${idx === 0 ? 'text-amber-400' : 'text-slate-400'}">#${idx + 1}</span>
+                        ${getAvatarHtml(p.avatarData.body, p.avatarData.hat, p.avatarData.acc, 'small')}
+                        <span class="font-bold text-xs text-white ml-2">${p.name}</span>
+                    </div>
+                    <span class="font-orbitron font-black text-sm text-cyan-400">${p.score} pts</span>
+                </div>
+            `).join('');
+        }
+
+        function hostNextQuestion() {
+            playSfx('click');
+            if (state.currentQuestionIdx + 1 < QUIZ_QUESTIONS.length) {
+                loadHostQuestion(state.currentQuestionIdx + 1);
+            } else {
+                showFinalPodium();
+            }
+        }
+
+        function showFinalPodium() {
+            state.questionState = 'PODIUM';
+            playSfx('fanfare');
+
+            const sorted = Object.values(state.players).sort((a, b) => b.score - a.score);
+
+            if (sorted[0]) {
+                document.getElementById('avatarPodium1').innerHTML = getAvatarHtml(sorted[0].avatarData.body, sorted[0].avatarData.hat, sorted[0].avatarData.acc, 'large');
+                document.getElementById('namePodium1').innerText = sorted[0].name;
+                document.getElementById('scorePodium1').innerText = sorted[0].score + ' pts';
+            }
+            if (sorted[1]) {
+                document.getElementById('avatarPodium2').innerHTML = getAvatarHtml(sorted[1].avatarData.body, sorted[1].avatarData.hat, sorted[1].avatarData.acc, 'normal');
+                document.getElementById('namePodium2').innerText = sorted[1].name;
+                document.getElementById('scorePodium2').innerText = sorted[1].score + ' pts';
+            }
+            if (sorted[2]) {
+                document.getElementById('avatarPodium3').innerHTML = getAvatarHtml(sorted[2].avatarData.body, sorted[2].avatarData.hat, sorted[2].avatarData.acc, 'normal');
+                document.getElementById('namePodium3').innerText = sorted[2].name;
+                document.getElementById('scorePodium3').innerText = sorted[2].score + ' pts';
+            }
+
+            showView('viewHostPodium');
+
+            if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+
+            broadcastToStudents({ type: 'FINAL_PODIUM', leaderboard: sorted });
+        }
+
+        function showStudentJoinScreen() {
+            playSfx('click');
+            if (!state.studentGoogleEmail) {
+                showView('viewStudentGoogleAuth');
+                document.getElementById('googleAuthError').classList.add('hidden');
+                document.getElementById('studentGoogleEmailInput').value = '';
+                return;
+            }
+
+            state.role = 'STUDENT';
+            initAvatarCreatorUI();
+            showView('viewStudentJoin');
+        }
+
+        function processGoogleLogin() {
+            playSfx('click');
+            const email = document.getElementById('studentGoogleEmailInput').value.trim();
+            
+            if (email.includes('@') && email.length > 5) {
+                state.studentGoogleEmail = email;
+                const nomeExtraido = email.split('@')[0];
+                document.getElementById('studentInputName').value = nomeExtraido;
+                playSfx('correct');
+                showStudentJoinScreen(); 
+            } else {
+                playSfx('wrong');
+                document.getElementById('googleAuthError').classList.remove('hidden');
+            }
+        }
+
+        // --- SISTEMA DE CRIAÇÃO DO AVATAR ---
+        function initAvatarCreatorUI() {
+            renderAvatarGrid('body', BODIES, state.studentBody);
+            renderAvatarGrid('hat', HATS, state.studentHat);
+            renderAvatarGrid('acc', ACCESSORIES, state.studentAcc);
+            updateBuilderPreview();
+            switchAvatarTab('body');
+        }
+
+        function renderAvatarGrid(type, arrayData, currentVal) {
+            const grid = document.getElementById(`grid_${type}`);
+            grid.innerHTML = arrayData.map(item => {
+                const isSelected = (currentVal === item);
+                return `
+                    <button type="button" onclick="selectAvatarPart('${type}', '${item}')" class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-transform hover:scale-110 ${isSelected ? 'bg-pink-500/30 border-2 border-pink-400 shadow-[0_0_10px_rgba(236,72,153,0.5)]' : 'bg-slate-950 border border-slate-700'}">
+                        ${item}
+                    </button>`;
+            }).join('');
+        }
+
+        function selectAvatarPart(type, item) {
+            playSfx('click');
+            if(type === 'body') state.studentBody = item;
+            if(type === 'hat') state.studentHat = item;
+            if(type === 'acc') state.studentAcc = item;
+            
+            // Re-render only that grid to show selection
+            if(type === 'body') renderAvatarGrid('body', BODIES, state.studentBody);
+            if(type === 'hat') renderAvatarGrid('hat', HATS, state.studentHat);
+            if(type === 'acc') renderAvatarGrid('acc', ACCESSORIES, state.studentAcc);
+            
+            updateBuilderPreview();
+        }
+
+        function switchAvatarTab(tabName) {
+            ['body', 'hat', 'acc'].forEach(t => {
+                document.getElementById(`grid_${t}`).classList.add('hidden');
+                document.getElementById(`tab_${t}`).className = "flex-1 bg-slate-900 text-slate-400 text-xs font-bold py-2 border-slate-800 hover:text-white transition";
+            });
+            
+            document.getElementById(`grid_${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab_${tabName}`).className = "flex-1 bg-pink-500 text-white text-xs font-bold py-2 border-slate-800 transition";
+            playSfx('click');
+        }
+
+        function updateBuilderPreview() {
+            document.getElementById('builderPreviewBox').innerHTML = getAvatarHtml(state.studentBody, state.studentHat, state.studentAcc, 'large');
+        }
+
+        async function joinRoomAsStudent() {
+            const pin = document.getElementById('studentInputPin').value.trim();
+            const name = document.getElementById('studentInputName').value.trim();
+            if (!/^\d{6}$/.test(pin)) { alert('Digite o PIN de 6 números.'); return; }
+            if (!name) { alert('Digite seu apelido.'); return; }
+            const joinButton = document.querySelector('#viewStudentJoin button[onclick="joinRoomAsStudent()"]');
+            joinButton.disabled = true;
+            joinButton.innerText = 'CONECTANDO...';
+            try {
+                await initOnline();
+                clearOnlineListeners();
+                roomRef = db.ref('rooms/' + pin);
+                const room = await roomRef.once('value');
+                if (!room.exists() || room.child('status').val() !== 'LOBBY') throw Error('Sala não encontrada ou partida já iniciada.');
+                const existing = room.child('players').val() || {};
+                if (Object.keys(existing).length >= 30) throw Error('A sala atingiu 30 participantes.');
+                state.role = 'STUDENT';
+                state.roomPin = pin;
+                state.studentName = name;
+                state.studentTotalScore = 0;
+                state.studentStreak = 0;
+                const student = {
+                    id: state.studentId, name,
+                    avatarData: {body: state.studentBody, hat: state.studentHat, acc: state.studentAcc},
+                    score: 0, streak: 0, correctCount: 0, isBot: false
+                };
+                currentStudentRef = roomRef.child('players/' + state.studentId);
+                await currentStudentRef.onDisconnect().remove();
+                await currentStudentRef.set(student);
+                document.getElementById('studentAvatarPreview').innerHTML = getAvatarHtml(state.studentBody, state.studentHat, state.studentAcc, 'large');
+                document.getElementById('studentDisplayName').innerText = name;
+                document.getElementById('studentWaitingScore').innerText = '0 pts';
+                showView('viewStudentWaiting');
+                listen(roomRef.child('toStudents'), 'child_added', snapshot => {
+                    const data = snapshot.val();
+                    if (data) handleStudentIncomingMessage(data);
+                });
+                playSfx('correct');
+            } catch (e) { alert('Não foi possível entrar: ' + e.message); }
+            finally { joinButton.disabled = false; joinButton.innerText = 'CONECTAR À SALA'; }
+        }
+
+        function renderStudentQuestionScreen(qData, qIdx) {
+            state.studentHasAnswered = false;
+            state.studentSelectedOption = null;
+
+            document.getElementById('studentQNum').innerText = `PERGUNTA ${qIdx + 1}`;
+            document.getElementById('studentLiveScore').innerText = `${state.studentTotalScore} pts`;
+            document.getElementById('studentQuestionText').innerText = qData.question;
+            document.getElementById('studentAnswerSubmittedBox').classList.add('hidden');
+
+            const letters = ['A', 'B', 'C', 'D'];
+            const grid = document.getElementById('studentOptionsGrid');
+
+            grid.innerHTML = qData.options.map((opt, i) => `
+                <button id="stdBtnOpt_${i}" onclick="submitStudentAnswer(${i})" class="w-full bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-pink-500 rounded-2xl p-4 flex items-center space-x-3 text-left transition group shadow-lg">
+                    <span class="w-10 h-10 rounded-xl bg-slate-800 group-hover:bg-pink-500 group-hover:text-white border border-slate-600 flex items-center justify-center font-orbitron font-black text-pink-400 text-lg transition flex-shrink-0">
+                        ${letters[i]}
+                    </span>
+                    <span class="text-white font-semibold text-sm leading-snug">${opt}</span>
+                </button>
+            `).join('');
+
+            showView('viewStudentQuestion');
+
+            const bar = document.getElementById('studentTimerBar');
+            bar.style.transition = 'none';
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.style.transition = 'width 45s linear';
+                bar.style.width = '0%';
+            }, 100);
+        }
+
+        function submitStudentAnswer(optionIdx) {
+            if (state.studentHasAnswered) return;
+
+            playSfx('click');
+            state.studentHasAnswered = true;
+            state.studentSelectedOption = optionIdx;
+
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`stdBtnOpt_${i}`);
+                if (btn) {
+                    if (i === optionIdx) {
+                        btn.className = "w-full bg-pink-600/30 border-2 border-pink-400 rounded-2xl p-4 flex items-center space-x-3 text-left shadow-[0_0_15px_rgba(236,72,153,0.5)]";
+                    } else {
+                        btn.classList.add('opacity-40');
+                        btn.disabled = true;
+                    }
+                }
+            }
+
+            document.getElementById('studentAnswerSubmittedBox').classList.remove('hidden');
+
+            sendToHost({
+                type: 'STUDENT_ANSWER',
+                studentId: state.studentId,
+                optionIndex: optionIdx
+            });
+        }
+
+        function handleRoundRevealForStudent(data) {
+            const isCorrect = (state.studentSelectedOption !== null && state.studentSelectedOption === data.correctOption);
+            let roundPoints = 0;
+            const previousScore = state.studentTotalScore;
+
+            if (isCorrect) {
+                playSfx('correct');
+                state.studentStreak++;
+                roundPoints = 1000 + (state.studentStreak * 100);
+                state.studentTotalScore += roundPoints; 
+            } else {
+                playSfx('wrong');
+                state.studentStreak = 0;
+            }
+
+            if (data.playersMap && data.playersMap[state.studentId]) {
+                state.studentTotalScore = data.playersMap[state.studentId].score;
+                roundPoints = state.studentTotalScore - previousScore;
+            }
+            const header = document.getElementById('studentResultHeader');
+            const title = document.getElementById('studentResultTitle');
+            const subtitle = document.getElementById('studentResultSubtitle');
+
+            if (isCorrect) {
+                header.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-emerald-500/20 border-2 border-emerald-400 text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.5)]";
+                header.innerHTML = '<i class="fa-solid fa-check"></i>';
+                title.innerText = "RESPOSTA CORRETA!";
+                title.className = "font-orbitron font-black text-2xl md:text-3xl text-emerald-400 mb-1";
+                subtitle.innerText = "Excelente percepção metafórica!";
+            } else {
+                header.className = "w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl mb-4 bg-rose-500/20 border-2 border-rose-400 text-rose-400 shadow-[0_0_25px_rgba(244,63,94,0.5)]";
+                header.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                title.innerText = "NÃO FOI DESSA VEZ!";
+                title.className = "font-orbitron font-black text-2xl md:text-3xl text-rose-400 mb-1";
+                subtitle.innerText = "Revise o conceito e continue tentando!";
+            }
+
+            document.getElementById('studentRoundPoints').innerText = `+${roundPoints} pts`;
+            document.getElementById('studentTotalAccumulatedScore').innerText = `${state.studentTotalScore} pts`;
+
+            const letters = ['A', 'B', 'C', 'D'];
+            const correctOptDisplay = document.getElementById('studentCorrectOptionDisplay');
+            correctOptDisplay.className = "p-4 rounded-2xl correct-option-glow flex items-center space-x-3 text-white font-bold text-sm";
+            correctOptDisplay.innerHTML = `
+                <span class="w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center font-orbitron">
+                    ${letters[data.correctOption]}
+                </span>
+                <span>${data.correctText}</span>
+            `;
+
+            showView('viewStudentResult');
+        }
+
+        function broadcastToStudents(payload) {
+            if (roomRef && db) roomRef.child('toStudents').push(payload).catch(e => console.error('Envio falhou:', e));
+        }
+
+        function sendToHost(payload) {
+            if (roomRef && db) roomRef.child('toHost').push(payload).catch(e => console.error('Envio falhou:', e));
+        }
+
+        function handleHostIncomingMessage(data) {
+            if (state.role !== 'HOST') return;
+
+            if (data.type === 'STUDENT_JOIN') {
+                state.players[data.student.id] = data.student;
+                renderHostPlayers();
+            }
+            else if (data.type === 'STUDENT_ANSWER') {
+                registerPlayerAnswer(data.studentId, data.optionIndex);
+            }
+        }
+
+        function handleStudentIncomingMessage(data) {
+            if (state.role !== 'STUDENT') return;
+
+            if (data.type === 'GAME_STARTED') {
+                state.studentTotalScore = 0; 
+                state.studentStreak = 0;
+            }
+            else if (data.type === 'QUESTION_START') {
+                renderStudentQuestionScreen(data.question, data.questionIndex);
+            }
+            else if (data.type === 'ROUND_REVEAL') {
+                handleRoundRevealForStudent(data);
+            }
+            else if (data.type === 'FINAL_PODIUM') {
+                const myRankIdx = data.leaderboard.findIndex(p => p.id === state.studentId);
+                const rankText = (myRankIdx !== -1) ? `${myRankIdx + 1}º Lugar` : '--º Lugar';
+
+                document.getElementById('studentFinalScoreDisplay').innerText = `${state.studentTotalScore} pts`;
+                document.getElementById('studentFinalRankDisplay').innerText = rankText;
+                showView('viewStudentFinal');
+            }
+        }
+
+        function launchSandboxMode() {
+            playSfx('click');
+            window.open(window.location.href, '_blank', 'width=600,height=800');
+        }
+
+        function generateClassReportModal() {
+            playSfx('click');
+            const players = Object.values(state.players);
+            const totalStudents = players.length || 1;
+
+            const now = new Date();
+            document.getElementById('reportDate').innerText = now.toLocaleDateString('pt-BR');
+            document.getElementById('reportTotalStudents').innerText = totalStudents;
+
+            const totalPossibleCorrect = totalStudents * QUIZ_QUESTIONS.length;
+            const actualCorrect = players.reduce((sum, p) => sum + p.correctCount, 0);
+            const avgPct = Math.round((actualCorrect / (totalPossibleCorrect || 1)) * 100);
+
+            document.getElementById('reportAverageAccuracy').innerText = `${avgPct}%`;
+
+            const sorted = [...players].sort((a, b) => b.score - a.score);
+            const topScore = sorted[0] ? sorted[0].score : 0;
+            document.getElementById('reportHighScore').innerText = `${topScore} pts`;
+
+            document.getElementById('reportLeaderboardBody').innerHTML = sorted.map((p, idx) => `
+                <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}">
+                    <td class="p-2 font-bold">${idx + 1}º</td>
+                    <td class="p-2 w-16 text-center">${getAvatarHtml(p.avatarData.body, p.avatarData.hat, p.avatarData.acc, 'small')}</td>
+                    <td class="p-2 font-bold">${p.name}</td>
+                    <td class="p-2 text-center font-bold text-emerald-700">${p.correctCount} / 15</td>
+                    <td class="p-2 text-right font-black">${p.score} pts</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('modalPrintReport').classList.remove('hidden');
+        }
+
+        function closeClassReportModal() {
+            document.getElementById('modalPrintReport').classList.add('hidden');
+        }
+
+        document.body.addEventListener('click', () => {
+            if (!audioCtx) initAudio();
+        }, { once: true });
+    </script>
+</body>
+</html>
